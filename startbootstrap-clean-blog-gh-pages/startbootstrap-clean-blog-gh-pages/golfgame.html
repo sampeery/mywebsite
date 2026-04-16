@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golf Tip Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: rgb(173, 223, 173);
+            font-family: 'Source Sans 3', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: rgb(1, 94, 1);
+            color: whitesmoke;
+            padding-left: 15px;
+            padding-right: 15px;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header h1 { font-size: 20px; font-weight: normal; }
+        .header a { color: whitesmoke; text-decoration: none; font-size: 14px; }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 620px;
+            width: 100%;
+            box-shadow: 0 4px 24px rgba(1,94,1,0.15);
+            text-align: center;
+        }
+
+        .golf-icon { font-size: 48px; margin-bottom: 12px; }
+
+        .card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: rgb(1, 94, 1);
+            margin-bottom: 8px;
+        }
+
+        .subtitle { color: #666; font-size: 15px; margin-bottom: 30px; }
+
+        .category-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .cat-btn {
+            background: none;
+            border: 1.5px solid rgb(1, 94, 1);
+            color: rgb(1, 94, 1);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'Source Sans 3', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .cat-btn:hover, .cat-btn.active {
+            background: rgb(1, 94, 1);
+            color: white;
+        }
+
+        .tip-box {
+            background: rgb(240, 250, 240);
+            border-left: 4px solid rgb(1, 94, 1);
+            border-radius: 8px;
+            padding: 24px 20px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+            text-align: left;
+        }
+
+        .tip-text {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 17px;
+            color: #2a2a2a;
+            line-height: 1.7;
+        }
+
+        .tip-text.placeholder {
+            color: #aaa;
+            font-size: 15px;
+            text-align: center;
+            width: 100%;
+            font-style: normal;
+            font-family: 'Source Sans 3', sans-serif;
+        }
+
+        .generate-btn {
+            background-color: rgb(1, 94, 1);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 36px;
+            font-size: 16px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            width: 100%;
+        }
+
+        .generate-btn:hover { background-color: rgb(2, 120, 2); }
+        .generate-btn:active { transform: scale(0.98); }
+
+        .back-link { text-align: center; margin-top: 20px; font-size: 14px; }
+        .back-link a { color: rgb(1, 94, 1); text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Golf Tip Generator</h1>
+        <a href="golfgame.html">← Back to Golf Page</a>
+    </div>
+
+    <div class="main">
+        <div class="card">
+            <div class="golf-icon">⛳</div>
+            <h2>Golf Tip of the Moment</h2>
+            <p class="subtitle">Pick a category and get a tip to improve your game.</p>
+
+            <div class="category-row">
+                <button class="cat-btn active" onclick="selectCategory(this, 'general')">General</button>
+                <button class="cat-btn" onclick="selectCategory(this, 'driving')">Driving</button>
+                <button class="cat-btn" onclick="selectCategory(this, 'irons')">Irons</button>
+                <button class="cat-btn" onclick="selectCategory(this, 'putting')">Putting</button>
+                <button class="cat-btn" onclick="selectCategory(this, 'shortgame')">Short Game</button>
+                <button class="cat-btn" onclick="selectCategory(this, 'strategy')">Strategy</button>
+            </div>
+
+            <div class="tip-box">
+                <p class="tip-text placeholder" id="tip-display">Hit "Generate Tip" to get started!</p>
+            </div>
+
+            <button class="generate-btn" onclick="generateTip()">Generate Tip</button>
+        </div>
+
+        <div class="back-link">
+            <a href="golfgame.html">← Return to Golf Page</a>
+        </div>
+    </div>
+
+    <script>
+        const tips = {
+            general: [
+                "Always warm up before a round. Spend 10 minutes stretching your shoulders, hips, and back — your first few holes will be dramatically better.",
+                "Keep a consistent pre-shot routine for every club. Consistency in your setup leads to consistency in your swing.",
+                "Golf is 90% mental. When you hit a bad shot, take a breath, let it go, and focus only on the next one.",
+                "Play within yourself. Trying to hit your absolute hardest usually results in your worst shots.",
+                "Track your stats — fairways hit, greens in regulation, putts per round. You can't improve what you don't measure.",
+                "Stay hydrated on the course. Dehydration causes poor focus and affects your swing more than most golfers realize."
+            ],
+            driving: [
+                "Tee the ball high enough so that half the ball sits above the top of your driver. This promotes an upward strike for more distance.",
+                "Focus on a smooth takeaway. Most bad drives start with a rushed backswing — slow it down and let the club do the work.",
+                "Keep your head behind the ball at impact. Moving forward too early causes weak, off-center hits.",
+                "Widen your stance slightly for driver — about shoulder width. A wider base gives you a more stable platform to rotate through.",
+                "Don't try to kill it. Your best drives come from a smooth, controlled swing around 80% effort.",
+                "Pick a specific target — not just the fairway, but a tree or landmark in the distance. Vague targets lead to vague results."
+            ],
+            irons: [
+                "Hit down on the ball with your irons. The loft on the club will get it in the air — trust it and compress the ball.",
+                "Your hands should be slightly ahead of the ball at address and at impact. This is the key to crisp iron contact.",
+                "Take one more club than you think you need. Most amateur golfers consistently come up short of the green.",
+                "Ball position matters — for mid irons, the ball should be in the center of your stance. Move it slightly forward for longer irons.",
+                "Focus on a divot after the ball, not before it. A divot that starts at or just past the ball means you're hitting it correctly.",
+                "Keep your tempo even from backswing to follow-through. Rushing the downswing is the most common iron mistake."
+            ],
+            putting: [
+                "Read the green from behind the hole looking back to your ball, not just from behind your ball. You'll see the break much more clearly.",
+                "On breaking putts, pick a spot a foot or two in front of your ball on the intended line and focus on rolling it over that spot.",
+                "Keep your head still until you hear the ball drop. Peeking early is the number one cause of missed short putts.",
+                "For long putts, focus on distance control over direction. Getting within 3 feet is more important than being on the perfect line.",
+                "Your putting grip should be light — about a 4 out of 10 pressure. Tight grips create tension and jerky strokes.",
+                "Practice the 3-foot putt obsessively. If you can make every 3-footer, you'll save more strokes than any other practice."
+            ],
+            shortgame: [
+                "For basic chip shots, keep your weight forward, hands ahead of the ball, and use a putting-style stroke with a wedge.",
+                "Don't try to help the ball in the air when chipping. Keep the face square, hit down slightly, and let the loft do the work.",
+                "Around the green, use the least loft necessary to get the ball rolling as soon as possible. More roll equals more predictability.",
+                "For bunker shots, aim 2 inches behind the ball and splash the sand out — you're hitting the sand, not the ball.",
+                "Practice your pitch shots from 30-50 yards. This is the distance most amateurs struggle with and it can save multiple strokes per round.",
+                "When chipping from tight lies, use a lower-lofted club like an 8-iron. It's more forgiving than a wedge on hard ground."
+            ],
+            strategy: [
+                "Play to your strengths, not to the scorecard. If you hit your 7-iron well, use it off the tee on tight holes instead of driver.",
+                "Aim for the fat part of the green, not the pin. Pins are placed in tough spots — the middle of the green is almost always the smarter target.",
+                "Know your actual distances, not your best-ever distances. Club selection based on realistic averages will save you multiple strokes per round.",
+                "When in trouble, your only goal is to get back in play. Don't compound one bad shot by attempting a hero shot from the trees.",
+                "Play away from trouble. If there's a hazard on the right, aim left — even if it's not the ideal angle to the pin.",
+                "Keep track of where you lose the most strokes and practice that area specifically. Improvement is most efficient when it's targeted."
+            ]
+        };
+
+        let selectedCategory = 'general';
+        let lastTipIndex = -1;
+
+        function selectCategory(btn, category) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedCategory = category;
+            lastTipIndex = -1;
+        }
+
+        function generateTip() {
+            const display = document.getElementById('tip-display');
+            const categoryTips = tips[selectedCategory];
+            let index;
+            do {
+                index = Math.floor(Math.random() * categoryTips.length);
+            } while (index === lastTipIndex && categoryTips.length > 1);
+            lastTipIndex = index;
+            display.className = 'tip-text';
+            display.textContent = categoryTips[index];
+        }
+    </script>
+
+</body>
+</html>
